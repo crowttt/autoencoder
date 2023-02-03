@@ -5,8 +5,6 @@ import multiprocessing
 
 
 class Config:
-#     en_channels = [1, 1, 128, 128, 64, 64, 32, 16]
-#     de_channels = [16, 32, 64, 64, 128, 128, 1, 1]
     en_channels = [1, 1, 128, 128, 64, 64, 32, 32, 16]
     de_channels = [16, 32, 32, 64, 64, 128, 128, 1, 1]
     en_stride = [1, 2, 1, 1, 2, 1, 2, 1]
