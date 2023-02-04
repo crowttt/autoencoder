@@ -65,8 +65,8 @@ def main():
 
     # create the network
     min_loss = sys.float_info.max
-    encode = Encoder(config.en_channels, config.en_stride, kernel_size=3)
-    decode = Decoder(config.de_channels, config.de_stride, kernel_size=3)
+    encode = Encoder(config.en_channels, config.en_stride, kernel_size=config.kernel)
+    decode = Decoder(config.de_channels, config.de_stride, kernel_size=config.kernel)
     encode_optimizer = load_optimizer(config, encode)
     decode_optimizer = load_optimizer(config, decode)
 
