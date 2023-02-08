@@ -29,8 +29,9 @@ class Encoder(nn.Module):
     def en_net_layer(self, in_channel, out_channel, kernel_size, dropout, stride, padding):
         model = []
         model.append(nn.BatchNorm2d(in_channel))
-        model.append(nn.ReLU(inplace=True))
+        # model.append(nn.ReLU(inplace=True))
         model.append(nn.Conv2d(in_channel, out_channel, kernel_size, stride, padding))
+        model.append(nn.ReLU(inplace=True))
         model.append(nn.BatchNorm2d(out_channel))
         model.append(nn.Dropout(dropout, inplace=True))
         return model
@@ -48,6 +49,8 @@ class Decoder(nn.Module):
         model = []
         padding = (kernel_size - 1) // 2
         acti = nn.LeakyReLU(0.2)
+        # acti = nn.Tanh()
+        # acti = nn.ReLU(inplace=True)
 
         nr_layer = len(channels) - 1
         for i in range(nr_layer):

@@ -6,12 +6,12 @@ import multiprocessing
 
 class Config:
     kernel = 3
-    en_channels = [1, 1, 128, 128, 64, 64, 32, 32, 16]
-    de_channels = [16, 32, 32, 64, 64, 128, 128, 1, 1]
+    en_channels = [1, 1, 128, 128, 64, 64, 32, 16, 1]
+    de_channels = [1, 16, 32, 64, 64, 128, 128, 1, 1]
     en_stride = [1, 2, 1, 1, 2, 1, 2, 1]
     de_stride = [1, 2, 1, 2, 1, 1, 2, 1]
     optimizer = 'Adam'
-    weight_decay = 0.0001
+    weight_decay = 0.00015
     base_lr = 0.1
     step = [10, 50]
     nesterov = True

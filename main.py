@@ -84,7 +84,7 @@ def main():
         encode.to(config.device)
         decode.to(config.device)
 
-
+    train_loss = []
     for i in range(config.epochs):
         epoch_val_loss = []
         total_loss = 0.0
@@ -99,7 +99,11 @@ def main():
                 data_input = data_input.to(config.device, dtype=torch.float)
 
             embed = encode(data_input)
+            # print(embed)
+            # print('-------------')
             output = decode(embed)
+            # print(output)
+            # print("===============")
 
             loss = autoencoder_loss(output.cuda(), data_input.cuda())
 
@@ -115,9 +119,15 @@ def main():
         
             torch.save({ 
                 'model_state_dict': encode.state_dict(), 
-                'optimizer_state_dict': encode_optimizer.state_dict()}, 'saved_model/encoder.pt')
+                'optimizer_state_dict': encode_optimizer.state_dict()}, 'saved_model/encoder2.pt')
+
+            torch.save({
+                'model_state_dict': decode.state_dict(),
+                'optimizer_state_dict': decode_optimizer.state_dict()}, 'saved_model/decoder2.pt')
         print("Training: ", i, " traing loss: ", total_loss / len(data_loader))
         print("Min loss: ",min_loss)
+        train_loss.append(total_loss / len(data_loader))
+    np.savetxt("loss/train_loss.csv", np.asarray( train_loss ), delimiter=",")
 
 if __name__ == '__main__':
     main()
