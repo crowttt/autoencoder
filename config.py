@@ -6,13 +6,13 @@ import multiprocessing
 
 class Config:
     kernel = 3
-    en_channels = [1, 1, 128, 128, 64, 64, 32, 16, 1]
-    de_channels = [1, 16, 32, 64, 64, 128, 128, 1, 1]
+    en_channels = [9600, 2400, 1200, 300, 75]
+    de_channels = [75, 300, 1200, 2400, 9600]
     en_stride = [1, 2, 1, 1, 2, 1, 2, 1]
     de_stride = [1, 2, 1, 2, 1, 1, 2, 1]
     optimizer = 'Adam'
-    weight_decay = 0.00015
-    base_lr = 0.1
+    weight_decay = 0.0001
+    base_lr = 0.0001
     step = [10, 50]
     nesterov = True
 
@@ -24,6 +24,8 @@ class Config:
             self.epochs = args.epochs
             self.batch_size = args.batch_size
             self.gpu_ids = args.gpu_ids
+            self.pre_encoder = args.pretrained_encoder
+            self.pre_decoder = args.pretrained_decoder
 
             self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
             self.num_workers = min(multiprocessing.cpu_count() - 1, 20)

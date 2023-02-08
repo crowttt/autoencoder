@@ -50,8 +50,10 @@ def main():
     parser.add_argument('--dataset', type=str, default="ntu_skeleton", help="specify dataset")
     parser.add_argument('--data_path', default="", required=True)
     parser.add_argument('--batchnorm', type=bool, default=True)
-    parser.add_argument('--epochs', type=int, default=70)
-    parser.add_argument('--batch_size', type=int, default=2048)
+    parser.add_argument('--epochs', type=int, default=1000)
+    parser.add_argument('--batch_size', type=int, default=128)
+    parser.add_argument('--pretrained_encoder', type=str, default=None)
+    parser.add_argument('--pretrained_decoder', type=str, default=None)
 
 
     args = parser.parse_args()
@@ -70,6 +72,22 @@ def main():
     encode_optimizer = load_optimizer(config, encode)
     decode_optimizer = load_optimizer(config, decode)
 
+    
+    if torch.cuda.is_available():
+        encode.to(config.device)
+        decode.to(config.device)
+
+    # Load pretrained model
+    if config.pre_encoder is not None and config.pre_decoder is not None:
+        print(f'loading pretrained encoder: {config.pre_encoder}')
+        print(f'loading pretrained decoder: {config.pre_decoder}')
+        pre_encoder = torch.load(config.pre_encoder)
+        pre_decoder = torch.load(config.pre_decoder)
+        encode.load_state_dict(pre_encoder['model_state_dict'])
+        decode.load_state_dict(pre_decoder['model_state_dict'])
+        encode_optimizer.load_state_dict(pre_encoder['optimizer_state_dict'])
+        decode_optimizer.load_state_dict(pre_decoder['optimizer_state_dict'])
+
     # Dataset
     data = ntu_skeleton(config.data_path)
     data_loader = DataLoader(data, batch_size=config.batch_size, shuffle=True, num_workers=config.num_workers,
@@ -79,10 +97,6 @@ def main():
     if len(config.gpu_ids) > 1:
         encode = nn.DataParallel(encode, device_ids=config.gpu_ids)
         decode = nn.DataParallel(decode, device_ids=config.gpu_ids)
-    
-    if torch.cuda.is_available():
-        encode.to(config.device)
-        decode.to(config.device)
 
     train_loss = []
     for i in range(config.epochs):
@@ -99,10 +113,10 @@ def main():
                 data_input = data_input.to(config.device, dtype=torch.float)
 
             embed = encode(data_input)
-            # print(embed)
+            # print(data_input.size())
             # print('-------------')
             output = decode(embed)
-            # print(output)
+            # print(output.size())
             # print("===============")
 
             loss = autoencoder_loss(output.cuda(), data_input.cuda())
@@ -119,15 +133,15 @@ def main():
         
             torch.save({ 
                 'model_state_dict': encode.state_dict(), 
-                'optimizer_state_dict': encode_optimizer.state_dict()}, 'saved_model/encoder2.pt')
+                'optimizer_state_dict': encode_optimizer.state_dict()}, 'saved_model/encoder3.pt')
 
             torch.save({
                 'model_state_dict': decode.state_dict(),
-                'optimizer_state_dict': decode_optimizer.state_dict()}, 'saved_model/decoder2.pt')
+                'optimizer_state_dict': decode_optimizer.state_dict()}, 'saved_model/decoder3.pt')
         print("Training: ", i, " traing loss: ", total_loss / len(data_loader))
         print("Min loss: ",min_loss)
         train_loss.append(total_loss / len(data_loader))
-    np.savetxt("loss/train_loss.csv", np.asarray( train_loss ), delimiter=",")
+    np.savetxt("loss/train_loss3.csv", np.asarray( train_loss ), delimiter=",")
 
 if __name__ == '__main__':
     main()
