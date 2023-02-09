@@ -5,7 +5,7 @@ import torch.nn.functional as F
 
 class Encoder(nn.Module):
 
-    def __init__(self, channels, stride, kernel_size=4, global_pool=None, convpool=None, batchnorm=False):
+    def __init__(self, channels, stride, kernel_size=4):
         super().__init__()
 
         model = []
@@ -17,17 +17,6 @@ class Encoder(nn.Module):
             model.append(nn.Linear(channels[i], channels[i+1]))
             model.append(nn.ReLU())
         self.model = nn.Sequential(*model)
-
-
-    def en_net_layer(self, in_channel, out_channel, kernel_size, dropout, stride, padding):
-        model = []
-        model.append(nn.BatchNorm2d(in_channel))
-        model.append(nn.Conv2d(in_channel, out_channel, kernel_size, stride, padding))
-        model.append(nn.ReLU(inplace=True))
-        model.append(nn.BatchNorm2d(out_channel))
-        model.append(nn.Dropout(dropout, inplace=True))
-        return model
-    
 
     def forward(self, x):
         x = self.model(x)

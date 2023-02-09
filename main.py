@@ -49,7 +49,6 @@ def main():
     parser.add_argument('--gpu_ids', nargs='+', help='specify gpu ids', default='0')
     parser.add_argument('--dataset', type=str, default="ntu_skeleton", help="specify dataset")
     parser.add_argument('--data_path', default="", required=True)
-    parser.add_argument('--batchnorm', type=bool, default=True)
     parser.add_argument('--epochs', type=int, default=1000)
     parser.add_argument('--batch_size', type=int, default=128)
     parser.add_argument('--pretrained_encoder', type=str, default=None)
@@ -112,12 +111,15 @@ def main():
             if torch.cuda.is_available():
                 data_input = data_input.to(config.device, dtype=torch.float)
 
-            embed = encode(data_input)
-            # print(data_input.size())
-            # print('-------------')
+            min_value = data_input.min()
+            std = data_input.std()
+            nor_data_input = (data_input - min_value) / std
+
+            embed = encode(nor_data_input)
             output = decode(embed)
-            # print(output.size())
-            # print("===============")
+
+            # recover data to original distribution
+            output = output * std + min_value
 
             loss = autoencoder_loss(output.cuda(), data_input.cuda())
 
@@ -133,15 +135,15 @@ def main():
         
             torch.save({ 
                 'model_state_dict': encode.state_dict(), 
-                'optimizer_state_dict': encode_optimizer.state_dict()}, 'saved_model/encoder3.pt')
+                'optimizer_state_dict': encode_optimizer.state_dict()}, 'saved_model/encoder.pt')
 
             torch.save({
                 'model_state_dict': decode.state_dict(),
-                'optimizer_state_dict': decode_optimizer.state_dict()}, 'saved_model/decoder3.pt')
+                'optimizer_state_dict': decode_optimizer.state_dict()}, 'saved_model/decoder.pt')
         print("Training: ", i, " traing loss: ", total_loss / len(data_loader))
         print("Min loss: ",min_loss)
         train_loss.append(total_loss / len(data_loader))
-    np.savetxt("loss/train_loss3.csv", np.asarray( train_loss ), delimiter=",")
+    np.savetxt("loss/train_loss.csv", np.asarray( train_loss ), delimiter=",")
 
 if __name__ == '__main__':
     main()

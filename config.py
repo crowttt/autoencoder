@@ -11,8 +11,8 @@ class Config:
     en_stride = [1, 2, 1, 1, 2, 1, 2, 1]
     de_stride = [1, 2, 1, 2, 1, 1, 2, 1]
     optimizer = 'Adam'
-    weight_decay = 0.0001
-    base_lr = 0.0001
+    weight_decay = 0.00001
+    base_lr = 0.000001
     step = [10, 50]
     nesterov = True
 
@@ -20,7 +20,6 @@ class Config:
         if args:
             self.dataset = args.dataset
             self.data_path = args.data_path
-            self.batchnorm = args.batchnorm
             self.epochs = args.epochs
             self.batch_size = args.batch_size
             self.gpu_ids = args.gpu_ids
