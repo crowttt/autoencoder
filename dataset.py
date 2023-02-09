@@ -9,7 +9,7 @@ import numpy as np
 
 
 class ntu_skeleton(Dataset):
-    def __init__(self, data_path, mmap=True, window_size=99) -> None:
+    def __init__(self, data_path, mmap=True, window_size=128) -> None:
         super().__init__()
         self.data_path = data_path
         self.mmap = mmap
@@ -21,7 +21,7 @@ class ntu_skeleton(Dataset):
         data = np.load(self.data_path + '/' + skeleton_name, mmap_mode='r')
         data = self.auto_pading(data, self.window_size)
         data = torch.tensor(data)
-        data = data[None, :, :]
+        data = data.flatten()
         return data
 
 
