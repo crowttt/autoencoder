@@ -50,7 +50,7 @@ def main():
     parser.add_argument('--dataset', type=str, default="ntu_skeleton", help="specify dataset")
     parser.add_argument('--data_path', default="", required=True)
     parser.add_argument('--epochs', type=int, default=1000)
-    parser.add_argument('--batch_size', type=int, default=128)
+    parser.add_argument('--batch_size', type=int, default=512)
     parser.add_argument('--pretrained_encoder', type=str, default=None)
     parser.add_argument('--pretrained_decoder', type=str, default=None)
 
@@ -106,7 +106,8 @@ def main():
 
         # begin iteration
         pbar = tqdm(data_loader)
-        for b, data_input in enumerate(pbar):
+        for b ,data_input in enumerate(pbar):
+            data_input = data_input[1]
             data_input = data_input.float()
             if torch.cuda.is_available():
                 data_input = data_input.to(config.device, dtype=torch.float)

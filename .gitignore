@@ -1,4 +1,5 @@
 __pycache__/
-ntu_skeleton/*
-saved_model/
+ntu_skeleton/
+output/
 loss/
+saved_model/

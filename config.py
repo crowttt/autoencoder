@@ -26,7 +26,6 @@ class Config:
             self.pre_encoder = args.pretrained_encoder
             self.pre_decoder = args.pretrained_decoder
 
-            self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-            self.num_workers = min(multiprocessing.cpu_count() - 1, 20)
-
             os.environ["CUDA_VISIBLE_DEVICES"] = str(args.gpu_ids)
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.num_workers = min(multiprocessing.cpu_count() - 1, 20)
