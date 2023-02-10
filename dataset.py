@@ -22,7 +22,7 @@ class ntu_skeleton(Dataset):
         data = self.auto_pading(data, self.window_size)
         data = torch.tensor(data)
         data = data.flatten()
-        return data
+        return skeleton_name, data
 
 
     def auto_pading(self, data, size):
